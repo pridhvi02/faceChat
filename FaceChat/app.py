@@ -3,8 +3,15 @@ from fastapi.responses import JSONResponse
 from fastapi.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
 from routes import auth, conversation
+import logging
+
+
+
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app.include_router(auth.router, prefix="/auth")
 app.include_router(conversation.router, prefix="/conversation")
