@@ -5,5 +5,6 @@ class User(BaseModel):
     name: str
     age: int
     contact: str
-    face_image: str
-    voice_sample: str
+    face_image: list[float]
+    voice_sample: list[float]
+    conversation: list[float]
