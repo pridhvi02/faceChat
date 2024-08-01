@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, String, LargeBinary
-from database import Base
-from pgvector.sqlalchemy import Vector
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
@@ -9,7 +10,5 @@ class User(Base):
     age = Column(Integer, nullable=False)
     gender = Column(String(10), nullable=False)
     contact = Column(String(100), nullable=False)
-    face_image = Column(Vector(768))
-    voice_sample = Column(Vector(13))
-    conversation = Column(String(1000), nullable=False)
-    
+    face_image = Column(LargeBinary)
+    voice_sample = Column(LargeBinary)

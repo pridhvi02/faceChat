@@ -1,67 +1,25 @@
 import cv2
 import numpy as np
-import logging
-from imgbeddings import imgbeddings
-import io
-
-logging.basicConfig(level=logging.INFO,)
-logger=logging.getLogger(__name__)
 
 class FaceRecognition:
     def __init__(self):
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-    def recognize_face(self, face_image: io.BytesIO) -> np.ndarray:
-        try:
-            #converted IOBytes object to bytes
-            image_bytes=face_image.read()
-        
-            #converted bytes to numpy array
-            image_array= np.frombuffer(image_bytes,np.uint8)
-        
-            #converted numpy array in to image
-            image=cv2.imdecode(image_array,cv2.IMREAD_COLOR)
-        
-            #converted the image to grey for face detection
-            gray_image=cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-        
-            logger.info('Image is read and converted to Gray-scale for face detection')
-        
-            faces = self.face_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=2, minSize=(100, 100))
-        
-            if len(faces)> 1:
-                raise ValueError('More than one face have been detected')
-            elif len(faces)==0:
-                raise ValueError('No Face have been detected')
-        
-            # Extract the single face
-            (x, y, w, h) = faces[0]
-            face = image[y:y+h, x:x+w]
-        
-            # Extract the face embedding
-            face_embedding = self.extract_face_embedding(face)
-            
-            logger.info("Face embedding have been calculated successfully")
-            return face_embedding
-        
-        except ValueError as ve:
-            logger.error(f"Error in Extracting the Face image {ve}")
-            raise
-        except Exception as e:
-            logger.error(f"Error in Extracting the Face image {e}")
-            raise
-            
+    def recognize_face(self, face_image: str) -> str:
+        # Convert the face image to a numpy array
+        face_array = np.fromstring(face_image, np.uint8)
+        face_image = cv2.imdecode(face_array, cv2.IMREAD_COLOR)
 
-    def extract_face_embedding(self, image):
-        try:
-            imembed=imgbeddings()
-            embedding=imembed.to_embeddings(image)
-            logger.info("Successfully extracted vector embeddings from the face image")
-            return embedding[0].to_list()
-        
-        except Exception as e:
-            logger.error(f"Error in Extracting Face Embedding {e}")
-            raise
-            
-        
-        
+        # Detect faces in the image
+        gray = cv2.cvtColor(face_image, cv2.COLOR_BGR2GRAY)
+        faces = self.face_cascade.detectMultiScale(gray, 1.1, 4)
+
+        # Extract the face embedding
+        face_embedding = self.extract_face_embedding(face_image, faces)
+
+        return face_embedding
+
+    def extract_face_embedding(self, face_image, faces):
+        # Implement face embedding extraction using a deep learning model
+        # For example, using FaceNet
+        pass
